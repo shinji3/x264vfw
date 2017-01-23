@@ -103,7 +103,7 @@ CFLAGS += "-I$(X264_DIR)"
 # Compiler flags for linking stage
 ##############################################################################
 
-VFW_LDFLAGS = "-L$(X264_DIR)" -lx264
+VFW_LDFLAGS = -static "-L$(X264_DIR)" -lx264
 
 ##############################################################################
 # Conditional options
