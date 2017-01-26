@@ -37,7 +37,6 @@
 #endif
 
 #include "csp.h"
-#include "x264cli.h"
 
 /* Name */
 #define X264VFW_NAME_L L"x264vfw"
@@ -202,7 +201,6 @@ typedef struct
     int b_cli_output;
     char *cli_output_file;
     const char *cli_output_muxer;
-    hnd_t cli_hout;
 
     /* Decoder */
 #if defined(HAVE_FFMPEG) && X264VFW_USE_DECODER
