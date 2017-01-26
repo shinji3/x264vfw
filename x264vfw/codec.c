@@ -1105,6 +1105,7 @@ static int split_cmdline(const char *cmdline, char **argv, char *arg_mem)
     return argc;
 }
 
+#if X264VFW_USE_FILE_OUTPUTS
 static int select_output(const char *muxer, char *filename, x264_param_t *param, CODEC *codec)
 {
     const char *ext = get_filename_extension(filename);
@@ -1120,11 +1121,13 @@ static int select_output(const char *muxer, char *filename, x264_param_t *param,
         codec->cli_output = mp4_output;
         param->b_annexb = 0;
         param->b_repeat_headers = 0;
+#if 0
         if (param->i_nal_hrd == X264_NAL_HRD_CBR)
         {
             x264vfw_log(codec, X264_LOG_WARNING, "cbr nal-hrd is not compatible with mp4\n");
             param->i_nal_hrd = X264_NAL_HRD_VBR;
         }
+#endif
     }
     else if (!strcasecmp(ext, "mkv"))
     {
@@ -1144,11 +1147,13 @@ static int select_output(const char *muxer, char *filename, x264_param_t *param,
         codec->cli_output = avi_output;
         param->b_annexb = 1;
         param->b_repeat_headers = 1;
+ #if 0
         if (param->b_vfr_input)
         {
             x264vfw_log(codec, X264_LOG_WARNING, "VFR is not compatible with AVI output\n");
             param->b_vfr_input = 0;
         }
+ #endif
 #else
         x264vfw_log(codec, X264_LOG_ERROR, "not compiled with AVI output support\n");
         return -1;
@@ -1159,6 +1164,7 @@ static int select_output(const char *muxer, char *filename, x264_param_t *param,
     codec->b_cli_output = TRUE;
     return 0;
 }
+#endif
 
 /* Parse command line for preset/tune options */
 static int parse_preset_tune(int argc, char **argv, x264_param_t *param, CODEC *codec)
@@ -1602,19 +1608,23 @@ LRESULT x264vfw_compress_begin(CODEC *codec, BITMAPINFO *lpbiInput, BITMAPINFO *
             }
     }
 
+#if X264VFW_USE_FILE_OUTPUTS
     /* Configure CLI output */
     if (select_output(codec->cli_output_muxer, codec->cli_output_file, &param, codec) < 0)
         goto fail;
+#endif
     if (!codec->b_cli_output)
     {
         param.b_annexb = 1;
         param.b_repeat_headers = 1; /* VFW needs SPS/PPS before each keyframe */
     }
+#if X264VFW_USE_FILE_OUTPUTS
     if (!codec->b_no_output && codec->b_cli_output && codec->cli_output.open_file(codec->cli_output_file, &codec->cli_hout, &codec->cli_output_opt) < 0)
     {
         x264vfw_log(codec, X264_LOG_ERROR, "could not open output file: '%s'\n", codec->cli_output_file);
         goto fail;
     }
+#endif
 
     /* Open the encoder */
     codec->h = x264_encoder_open(&param);
@@ -1626,6 +1636,7 @@ LRESULT x264vfw_compress_begin(CODEC *codec, BITMAPINFO *lpbiInput, BITMAPINFO *
 
     x264_encoder_parameters(codec->h, &param);
 
+#if X264VFW_USE_FILE_OUTPUTS
     if (codec->b_cli_output)
     {
 #if X264VFW_USE_VIRTUALDUB_HACK
@@ -1657,6 +1668,7 @@ LRESULT x264vfw_compress_begin(CODEC *codec, BITMAPINFO *lpbiInput, BITMAPINFO *
             }
         }
     }
+#endif
 
 #if X264VFW_USE_VIRTUALDUB_HACK
     codec->b_warn_frame_loss = !(codec->b_use_vd_hack || codec->b_cli_output);
