@@ -97,13 +97,12 @@ endif
 
 # Constants which should not be modified
 CFLAGS += -D_WIN32_IE=0x0501
-CFLAGS += "-I$(X264_DIR)"
 
 ##############################################################################
 # Compiler flags for linking stage
 ##############################################################################
 
-VFW_LDFLAGS = -static "-L$(X264_DIR)" -lx264
+VFW_LDFLAGS = -static
 
 ##############################################################################
 # Conditional options
@@ -128,7 +127,7 @@ RESFLAGS += "-DDLL_NAME=$(DLL)"
 endif
 
 # Sources
-SRC_C = codec.c config.c csp.c driverproc.c
+SRC_C = codec.c driverproc.c
 SRC_RES = resource.rc
 
 # Muxers
