@@ -40,7 +40,7 @@
 #define X264VFW_CSP_UYVY           0x0007  /* yuv 4:2:2 packed */
 #define X264VFW_CSP_BGR            0x0008  /* packed bgr 24bits */
 #define X264VFW_CSP_BGRA           0x0009  /* packed bgr 32bits */
-#define X264VFW_CSP_MAX            0x000a  /* end of list */
+//#define X264VFW_CSP_MAX          0x000a  /* end of list */
 #define X264VFW_CSP_VFLIP          0x1000  /* the csp is vertically flipped */
 
 #endif
