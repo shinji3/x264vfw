@@ -376,7 +376,7 @@ LRESULT x264vfw_decompress_begin(CODEC *codec, BITMAPINFO *lpbiInput, BITMAPINFO
 
     if (x264vfw_decompress_query(codec, lpbiInput, lpbiOutput) != ICERR_OK)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "incompatible input/output frame format (decode)\n");
+        DPRINTF("incompatible input/output frame format (decode)\n");
         return ICERR_BADFORMAT;
     }
 
@@ -389,21 +389,21 @@ LRESULT x264vfw_decompress_begin(CODEC *codec, BITMAPINFO *lpbiInput, BITMAPINFO
     codec->decoder = avcodec_find_decoder(AV_CODEC_ID_H264);
     if (!codec->decoder)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "avcodec_find_decoder failed\n");
+        DPRINTF("avcodec_find_decoder failed\n");
         return ICERR_ERROR;
     }
 
     codec->decoder_context = avcodec_alloc_context3(codec->decoder);
     if (!codec->decoder_context)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "avcodec_alloc_context failed\n");
+        DPRINTF("avcodec_alloc_context failed\n");
         return ICERR_ERROR;
     }
 
     codec->decoder_frame = av_frame_alloc();
     if (!codec->decoder_frame)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "av_frame_alloc failed\n");
+        DPRINTF("av_frame_alloc failed\n");
         av_freep(&codec->decoder_context);
         return ICERR_ERROR;
     }
@@ -435,7 +435,7 @@ LRESULT x264vfw_decompress_begin(CODEC *codec, BITMAPINFO *lpbiInput, BITMAPINFO
 
     if (avcodec_open2(codec->decoder_context, codec->decoder, NULL) < 0)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "avcodec_open failed\n");
+        DPRINTF("avcodec_open failed\n");
         av_freep(&codec->decoder_context);
         av_frame_free(&codec->decoder_frame);
         av_freep(&codec->decoder_extradata);
@@ -550,7 +550,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
         /* Check overflow */
         if (neededsize < FF_INPUT_BUFFER_PADDING_SIZE)
         {
-            //x264vfw_log(codec, X264_LOG_DEBUG, "buffer overflow check failed\n");
+            DPRINTF("buffer overflow check failed\n");
             return ICERR_ERROR;
         }
         if (codec->decoder_buf_size < neededsize)
@@ -560,7 +560,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
             codec->decoder_buf = av_malloc(neededsize);
             if (!codec->decoder_buf)
             {
-                //x264vfw_log(codec, X264_LOG_DEBUG, "failed to realloc decoder buffer\n");
+                DPRINTF("failed to realloc decoder buffer\n");
                 return ICERR_ERROR;
             }
             codec->decoder_buf_size = neededsize;
@@ -606,7 +606,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
         len = avcodec_decode_video2(codec->decoder_context, codec->decoder_frame, &got_picture, &codec->decoder_pkt);
         if (len < 0)
         {
-            //x264vfw_log(codec, X264_LOG_DEBUG, "avcodec_decode_video2 failed\n");
+            DPRINTF("avcodec_decode_video2 failed\n");
             return ICERR_ERROR;
         }
 #if X264VFW_USE_VIRTUALDUB_HACK
@@ -616,7 +616,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
     picture_size = x264vfw_picture_get_size(codec->decoder_pix_fmt, inhdr->biWidth, inhdr->biHeight);
     if (picture_size < 0)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "x264vfw_picture_get_size failed\n");
+        DPRINTF("x264vfw_picture_get_size failed\n");
         return ICERR_ERROR;
     }
 
@@ -630,7 +630,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
 
     if (x264vfw_picture_fill(&picture, icd->lpOutput, codec->decoder_pix_fmt, inhdr->biWidth, inhdr->biHeight) < 0)
     {
-        //x264vfw_log(codec, X264_LOG_DEBUG, "x264vfw_picture_fill failed\n");
+        DPRINTF("x264vfw_picture_fill failed\n");
         return ICERR_ERROR;
     }
     if (codec->decoder_swap_UV)
@@ -648,7 +648,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
     if (codec->decoder_vflip)
         if (x264vfw_picture_vflip(&picture, codec->decoder_pix_fmt, inhdr->biWidth, inhdr->biHeight) < 0)
         {
-            //x264vfw_log(codec, X264_LOG_DEBUG, "x264vfw_picture_vflip failed\n");
+            DPRINTF("x264vfw_picture_vflip failed\n");
             return ICERR_ERROR;
         }
 
@@ -657,7 +657,7 @@ LRESULT x264vfw_decompress(CODEC *codec, ICDECOMPRESS *icd)
         codec->sws = x264vfw_init_sws_context(codec, inhdr->biWidth, inhdr->biHeight);
         if (!codec->sws)
         {
-            //x264vfw_log(codec, X264_LOG_DEBUG, "x264vfw_init_sws_context failed\n");
+            DPRINTF("x264vfw_init_sws_context failed\n");
             return ICERR_ERROR;
         }
     }
