@@ -44,22 +44,12 @@ ifeq ($(FFMPEG_NAME)x,x)
 FFMPEG_NAME = ffmpeg
 endif
 
-ifeq ($(HAVE_FFMPEG)x,x)
-ifeq ($(FFMPEG_DIR)x,x)
-HAVE_FFMPEG = no
-else
-HAVE_FFMPEG = yes
-endif
-endif
-
 ifeq ($(wildcard config.mak)x,x)
 ifneq ($(wildcard $(X264_DIR)/config.mak)x,x)
 $(info $() Copy config.mak from $(X264_DIR))
 $(shell cat "$(X264_DIR)/config.mak" | awk '/^ *\w+ *=/' > "$(DIR_CUR)/config.mak")
-ifeq ($(HAVE_FFMPEG),yes)
 $(info $() Append config.mak from $(FFMPEG_DIR))
 $(shell cat "$(FFMPEG_DIR)/config.mak" | awk '/^ *EXTRALIBS *=/' >> "$(DIR_CUR)/config.mak")
-endif
 endif
 endif
 ifeq ($(wildcard config.h)x,x)
@@ -108,14 +98,11 @@ VFW_LDFLAGS = -static
 # Conditional options
 ##############################################################################
 
-ifeq ($(HAVE_FFMPEG),yes)
-CFLAGS += -DHAVE_FFMPEG
 CFLAGS += "-I$(FFMPEG_DIR)"
 VFW_LDFLAGS += "-L$(FFMPEG_DIR)/libavcodec" -lavcodec
 VFW_LDFLAGS += "-L$(FFMPEG_DIR)/libavutil" -lavutil
 VFW_LDFLAGS += "-L$(FFMPEG_DIR)/libswscale" -lswscale
 VFW_LDFLAGS += $(EXTRALIBS)
-endif
 
 # Sources
 SRC_C = codec.c driverproc.c
