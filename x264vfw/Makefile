@@ -18,10 +18,6 @@ DIR_CUR = $(shell pwd)
 # Path to include files (library and src)
 DIR_SRC = $(DIR_CUR)
 
-ifeq ($(X264_DIR)x,x)
-X264_DIR = $(DIR_CUR)/../x264
-endif
-
 ifeq ($(FFMPEG_DIR)x,x)
 ifeq ($(FFMPEG_NAME)x,x)
 ifneq ($(wildcard $(DIR_CUR)/../ffmpeg/*)x,x)
@@ -42,21 +38,6 @@ endif
 
 ifeq ($(FFMPEG_NAME)x,x)
 FFMPEG_NAME = ffmpeg
-endif
-
-ifeq ($(wildcard config.mak)x,x)
-ifneq ($(wildcard $(X264_DIR)/config.mak)x,x)
-$(info $() Copy config.mak from $(X264_DIR))
-$(shell cat "$(X264_DIR)/config.mak" | awk '/^ *\w+ *=/' > "$(DIR_CUR)/config.mak")
-$(info $() Append config.mak from $(FFMPEG_DIR))
-$(shell cat "$(FFMPEG_DIR)/config.mak" | awk '/^ *EXTRALIBS *=/' >> "$(DIR_CUR)/config.mak")
-endif
-endif
-ifeq ($(wildcard config.h)x,x)
-ifneq ($(wildcard $(X264_DIR)/config.h)x,x)
-$(info $() Copy config.h from $(X264_DIR))
-$(shell cp -f "$(X264_DIR)/config.h" "$(DIR_CUR)/config.h")
-endif
 endif
 
 -include config.mak
