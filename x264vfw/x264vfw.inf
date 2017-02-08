@@ -1,0 +1,87 @@
+[Version]
+Signature = "$CHICAGO$"
+Class = MEDIA
+
+[SourceDisksNames]
+1="OEM Multimedia Disk",, 0001
+
+[SourceDisksFiles]
+x264vfw.dll=1
+x264vfw.inf=1
+
+[Installable.Drivers]
+X264 = 1:x264vfw.dll, "vidc.X264", %DisplayName% , , ,
+
+[DefaultInstall]
+CopyFiles = X264.Copy.Inf,X264.Copy
+Updateinis = X264.Updateini
+addreg = X264.AddReg9x
+MediaType = SOFTWARE
+
+[DefaultInstall.ntx86]
+CopyFiles = X264.Copy.Inf,X264.Copy
+addreg = X264.AddRegNT
+MediaType = SOFTWARE
+
+[DefaultInstall.ntamd64]
+
+[DefaultUninstall]
+DelReg = X264.DelReg
+DelFiles = X264.Copy,X264.Copy.Inf
+UpdateInis = X264.DelIni
+
+[X264.Copy]
+x264vfw.dll
+
+[X264.Copy.Inf]
+x264vfw.inf
+
+[X264.UpdateIni]
+system.ini, drivers32,,"vidc.X264=x264vfw.dll"
+
+[X264.DelIni]
+system.ini, drivers32,"vidc.X264=x264vfw.dll",
+
+[X264.AddReg9x]
+HKCU,SOFTWARE\Microsoft\MediaPlayer\Preferences\VideoSettings,IgnoreAVSync,%REG_DWORD%,1
+
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\vidc.X264,Description,,%DisplayName%
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\vidc.X264,Driver,,x264vfw.dll
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\vidc.X264,FriendlyName,,"X264"
+
+HKLM,%UnInstallPath%,DisplayName,,%DisplayName%
+HKLM,%UnInstallPath%,UninstallString,,"%10%\rundll.exe setupx.dll,InstallHinfSection DefaultUninstall 132 %17%\%InfFile%"
+
+[X264.AddRegNT]
+HKCU,SOFTWARE\Microsoft\MediaPlayer\Preferences\VideoSettings,IgnoreAVSync,%REG_DWORD%,1
+
+HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc,x264vfw.dll,,%DisplayName%
+HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers32,vidc.X264,,x264vfw.dll
+
+HKLM,%UnInstallPath%,DisplayName,,%DisplayName%
+HKLM,%UnInstallPath%,DisplayIcon,,"%11%\x264vfw.dll,0"
+HKLM,%UnInstallPath%,Publisher,,%mfgname%
+HKLM,%UnInstallPath%,HelpLink,,%Website%
+HKLM,%UnInstallPath%,NoModify,%REG_DWORD%,1
+HKLM,%UnInstallPath%,NoRepair,%REG_DWORD%,1
+HKLM,%UnInstallPath%,UninstallString,,"%11%\rundll32.exe setupapi,InstallHinfSection DefaultUninstall 132 %17%\%InfFile%"
+
+[X264.DelReg]
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\vidc.X264
+
+HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc,x264vfw.dll,,""
+HKLM,%UnInstallPath%
+
+[DestinationDirs]
+DefaultDestDir = 11	; LDID_SYS
+X264.Copy = 11
+X264.Copy.Inf = 17
+
+[Strings]
+DisplayName="x264vfw - H.264/MPEG-4 AVC codec"
+InfFile="x264vfw.inf"
+UnInstallPath="Software\Microsoft\Windows\CurrentVersion\Uninstall\x264vfw"
+MediaClassName="Media Devices"
+mfgname="shinji3"
+Website="https://github.com/shinji3/x264vfw"
+REG_DWORD=0x00010001

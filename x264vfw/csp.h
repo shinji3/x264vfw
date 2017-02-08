@@ -40,16 +40,7 @@
 #define X264VFW_CSP_UYVY           0x0007  /* yuv 4:2:2 packed */
 #define X264VFW_CSP_BGR            0x0008  /* packed bgr 24bits */
 #define X264VFW_CSP_BGRA           0x0009  /* packed bgr 32bits */
-#define X264VFW_CSP_MAX            0x000a  /* end of list */
+//#define X264VFW_CSP_MAX          0x000a  /* end of list */
 #define X264VFW_CSP_VFLIP          0x1000  /* the csp is vertically flipped */
-
-typedef int (*x264vfw_csp_t)( x264_image_t *, x264_image_t *, int i_width, int i_height );
-
-typedef struct
-{
-    x264vfw_csp_t convert[X264VFW_CSP_MAX];
-} x264vfw_csp_function_t;
-
-void x264vfw_csp_init( x264vfw_csp_function_t *pf, int i_x264_csp, int i_colmatrix, int b_fullrange );
 
 #endif
